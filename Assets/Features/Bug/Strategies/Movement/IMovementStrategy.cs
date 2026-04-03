@@ -4,6 +4,6 @@ namespace Bug.Strategies
 {
     public interface IMovementStrategy
     {
-        Vector3 GetTargetPosition(Domain.Bug bug);
+        Vector3? GetTargetPosition(Domain.Bug bug);
     }
 }

@@ -11,11 +11,11 @@ namespace Bug.Strategies
             //_foodPerEat = foodPerEat;
         }
 
-        public Vector3 GetTargetPosition(Domain.Bug bug)
+        public Vector3? GetTargetPosition(Domain.Bug bug)
         {
             //var foodPosition = _foodService.GetNearestFoodPosition(bug.Position);
             //return foodPosition;
-            return Vector3.zero; // Placeholder
+            return null; // Placeholder
         }
     }
 }

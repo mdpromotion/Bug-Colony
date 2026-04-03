@@ -13,12 +13,12 @@ namespace Bug.Strategies
             //_foodPerEat = foodPerEat;
         }
 
-        public Vector3 GetTargetPosition(Domain.Bug bug)
+        public Vector3? GetTargetPosition(Domain.Bug bug)
         {
             //var foodPosition = _foodService.GetNearestFoodPosition(bug.Position);
             //var bugPosition = _colonyService.GetNearestBugPosition(bug.Position);
 
-            //Vector3 target = bug.Position;
+            //Vector3 target = null;
             //float bestDistance = float.MaxValue;
 
             /*if (foodPosition.HasValue)
