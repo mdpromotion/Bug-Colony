@@ -14,7 +14,7 @@ namespace Bug.Installers
         public override void InstallBindings()
         {
             Container.Bind<IColonyService>().To<ColonyService>().AsSingle();
-            Container.Bind<SpawnBugUseCase>().AsSingle();
+            Container.Bind<ISpawnBugUseCase>().To<SpawnBugUseCase>().AsSingle();
             Container.Bind<BugFactory>().AsSingle();
 
             BindStrategies();

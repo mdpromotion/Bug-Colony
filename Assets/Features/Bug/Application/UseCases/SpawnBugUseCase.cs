@@ -3,7 +3,7 @@ using Bug.Infrastructure;
 
 namespace Bug.Application.UseCases
 {
-    public class SpawnBugUseCase
+    public class SpawnBugUseCase : ISpawnBugUseCase
     {
         private readonly IBugAssembler _bugAssembler;
         private readonly IColonyService _colonyService;
