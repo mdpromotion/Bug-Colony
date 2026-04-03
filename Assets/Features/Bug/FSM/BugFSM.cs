@@ -6,8 +6,7 @@ namespace Bug.FSM
     {
         Idle,
         Moving,
-        Reproducing,
-        Dying
+        Reproducing
     }
 
     public class BugFSM
@@ -15,17 +14,23 @@ namespace Bug.FSM
         private Domain.Bug _bug;
         private IBugState _currentState;
 
-        private Dictionary<BugStateType, IBugState> _states;
+        private readonly Dictionary<BugStateType, IBugState> _states = new();
 
         public BugFSM(Domain.Bug bug, Dictionary<BugStateType, IBugState> states)
         {
             _bug = bug;
             _states = states;
         }
-        public void ChangeState(IBugState newState)
+
+        public void ChangeState(BugStateType newStateType)
         {
+            if (!_states.TryGetValue(newStateType, out var newState))
+                return;
+
             _currentState?.Exit(_bug);
+
             _currentState = newState;
+
             _currentState.Enter(_bug);
         }
     }
