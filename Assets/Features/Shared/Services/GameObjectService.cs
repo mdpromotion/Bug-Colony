@@ -25,10 +25,13 @@ namespace Shared.Services
 
             foreach (Transform child in transform)
             {
-                if (child.TryGetComponent<PooledObject>(out var pooled) && pooled.Type != ObjectType.None)
+                if (!child.TryGetComponent<PooledObject>(out var pooled) || pooled.Type == ObjectType.None)
                     continue;
 
                 child.gameObject.SetActive(false);
+                if (!_pools.ContainsKey(pooled.Type))
+                    continue;
+
                 _pools[pooled.Type].Enqueue(child.gameObject);
             }
         }
@@ -49,10 +52,13 @@ namespace Shared.Services
             return obj;
         }
 
-        public void ReturnObject(GameObject obj, ObjectType type)
+        public void ReturnObject(GameObject obj)
         {
+            if (!obj.TryGetComponent<PooledObject>(out var pooled))
+                return;
+
             obj.SetActive(false);
-            _pools[type].Enqueue(obj);
+            _pools[pooled.Type].Enqueue(obj);
         }
     }
 }
