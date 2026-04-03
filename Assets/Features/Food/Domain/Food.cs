@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Food.Domain
 {
-    public class Food
+    public class Food : IFood
     {
-        public readonly Vector3 Position;
+        public Vector3 Position { get; }
 
         public event Action FoodEaten;
 
