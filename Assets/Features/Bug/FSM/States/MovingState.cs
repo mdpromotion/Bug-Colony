@@ -5,26 +5,27 @@ namespace Bug.FSM
     public class MovingState : IBugState
     {
         private readonly IMovementStrategy _movementStrategy;
-        private readonly IEatingStrategy _eatingStrategy;
 
-        public MovingState(IMovementStrategy movementStrategy, IEatingStrategy eatingStrategy)
+        public MovingState(IMovementStrategy movementStrategy)
         {
             _movementStrategy = movementStrategy;
-            _eatingStrategy = eatingStrategy;
         }
 
-        public void Enter(Domain.Bug bug)
+        public void Enter(Domain.Bug bug) { }
+
+        public void Execute(Domain.Bug bug, BugFSM fsm)
         {
-            
+            var newPosition = _movementStrategy.GetTargetPosition(bug);
+            if (!newPosition.HasValue)
+            {
+                fsm.ChangeState(BugStateType.Idle);
+                return;
+            }
+
+            fsm.NotifyTargetPositionChanged(newPosition.Value);
+
         }
 
-        public void Execute(Domain.Bug bug)
-        {
-            
-        }
-
-        public void Exit(Domain.Bug bug)
-        {
-        }
+        public void Exit(Domain.Bug bug) { }
     }
 }

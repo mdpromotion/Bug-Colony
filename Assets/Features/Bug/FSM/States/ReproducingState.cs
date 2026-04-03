@@ -11,19 +11,12 @@ namespace Bug.FSM
             _reproductionStrategy = reproductionStrategy;
         }
 
-        public void Enter(Domain.Bug bug)
-        {
-            
-        }
-        public void Execute(Domain.Bug bug)
+        public void Enter(Domain.Bug bug) { }
+        public void Execute(Domain.Bug bug, BugFSM fsm)
         {
             // Reproduction logic here
         }
 
-        public void Exit(Domain.Bug bug)
-        {
-
-        }
-
+        public void Exit(Domain.Bug bug) { }
     }
 }
