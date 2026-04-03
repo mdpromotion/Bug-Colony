@@ -1,3 +1,4 @@
+using Food.Application;
 using Food.Infrastructure;
 using Zenject;
 
@@ -9,6 +10,7 @@ namespace Food.Installers
         {
             Container.Bind<IFoodFactory>().To<FoodFactory>().AsSingle();
             Container.Bind<IFoodService>().To<FoodService>().AsSingle();
+            Container.Bind<ISpawnFoodUseCase>().To<SpawnFoodUseCase>().AsSingle();
         }
     }
 }

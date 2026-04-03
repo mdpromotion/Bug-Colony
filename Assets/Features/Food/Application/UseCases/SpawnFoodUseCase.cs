@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Food.Application
 {
-    public class SpawnFoodUseCase
+    public class SpawnFoodUseCase : ISpawnFoodUseCase
     {
         public static readonly string LogPrefix = nameof(FoodFactory);
 
