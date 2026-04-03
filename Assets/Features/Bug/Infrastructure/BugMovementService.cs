@@ -1,44 +1,24 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Bug.Infrastructure
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    public class BugMovementService : IBugMovementService
+    public class BugMovementService : MonoBehaviour, IBugMovementService
     {
-        private Dictionary<Domain.Bug, NavMeshAgent> _bugAgents = new();
+        private NavMeshAgent _agent;
 
-        public void RegisterBug(Domain.Bug bug, NavMeshAgent agent)
+        void Awake() => _agent = GetComponent<NavMeshAgent>();
+
+        public void ToggleAgent(bool isActive)
         {
-            if (!_bugAgents.ContainsKey(bug))
-            {
-                _bugAgents.Add(bug, agent);
-            }
+            _agent.enabled = isActive;
         }
 
-        public void UnregisterBug(Domain.Bug bug)
+        public void SetTarget(Vector3 position)
         {
-            _bugAgents.Remove(bug);
+            _agent.SetDestination(position);
         }
 
-        public void ToggleAgent(Domain.Bug bug, bool isActive)
-        {
-            if (TryGetAgent(bug, out var agent)) 
-            {
-                agent.enabled = isActive;
-            }
-        }
-
-        public void SetTarget(Domain.Bug bug, Vector3 position)
-        {
-            if (TryGetAgent(bug, out var agent))
-                agent.SetDestination(position);
-        }
-
-        private bool TryGetAgent(Domain.Bug bug, out NavMeshAgent agent)
-        {
-            return _bugAgents.TryGetValue(bug, out agent);
-        }
     }
 }
