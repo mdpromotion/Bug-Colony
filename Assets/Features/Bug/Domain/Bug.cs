@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Bug.Domain
@@ -5,20 +6,31 @@ namespace Bug.Domain
     public class Bug
     {
         public Vector3 Position { get; private set; } // If this was production code, I would make a special value-object for this, but for the sake of this demo, I think it's fine.
-        public IMovementStrategy MovementStrategy { get; private set; }
-        public IEatingStrategy EatingStrategy { get; private set; }
-        public IReproductionStrategy ReproductionStrategy { get; private set; }
+        public int FoodEaten { get; private set; }
+        public BugType Type { get; private set; }
 
-        public Bug(IMovementStrategy movementStrategy, IEatingStrategy eatingStrategy, IReproductionStrategy reproductionStrategy)
+        public event Action BugDied;
+
+        public Bug(BugType type)
         {
-            MovementStrategy = movementStrategy;
-            EatingStrategy = eatingStrategy;
-            ReproductionStrategy = reproductionStrategy;
+            Type = type;
         }
 
         public void SetPosition(Vector3 position)
         {
             Position = position;
+        }
+
+        public void AddFood(int food)
+        {
+            if (food <= 0)
+                return;
+
+            FoodEaten += food;
+        }
+        public void SetFood(int food)
+        {
+            FoodEaten = food;
         }
     }
 }

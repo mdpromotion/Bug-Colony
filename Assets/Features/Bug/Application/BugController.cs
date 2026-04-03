@@ -19,6 +19,8 @@ namespace Bug.Application
             {
                 _bugMovementService.SetTarget(pos);
             };
+
+            
         }
 
         public void Tick()
