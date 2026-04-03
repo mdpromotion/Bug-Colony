@@ -3,7 +3,7 @@ using Bug.Infrastructure;
 
 namespace Bug.Application
 {
-    public class BugController
+    public class BugController : IBugController
     {
         public readonly Domain.Bug Bug;
         public readonly BugFSM BugFSM;
@@ -23,6 +23,7 @@ namespace Bug.Application
 
         public void Tick()
         {
+            Bug.SetPosition(_bugMovementService.GetPosition());
             BugFSM.Update();
         }
     }
