@@ -11,11 +11,6 @@ namespace Shared.Services
         Food
     }
 
-    public class PooledObject : MonoBehaviour
-    {
-        public ObjectType Type;
-    }
-
     public class GameObjectService : MonoBehaviour, IGameObjectService
     {
         private readonly Dictionary<ObjectType, Queue<GameObject>> _pools = new();
@@ -30,9 +25,7 @@ namespace Shared.Services
 
             foreach (Transform child in transform)
             {
-                var pooled = child.GetComponent<PooledObject>();
-
-                if (pooled == null || pooled.Type == ObjectType.None)
+                if (child.TryGetComponent<PooledObject>(out var pooled) && pooled.Type != ObjectType.None)
                     continue;
 
                 child.gameObject.SetActive(false);
