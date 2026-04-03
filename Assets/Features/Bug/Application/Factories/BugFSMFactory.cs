@@ -28,8 +28,8 @@ namespace Bug.Application.Factories
             var reproductionStrategy = _reproductionStrategies[bug.Type];
             var states = new Dictionary<BugStateType, IBugState>
             {
-                { BugStateType.Idle, new IdleState(movementStrategy, eatingStrategy) },
-                { BugStateType.Moving, new MovingState(movementStrategy, eatingStrategy) },
+                { BugStateType.Idle, new IdleState(movementStrategy) },
+                { BugStateType.Moving, new MovingState(movementStrategy) },
                 { BugStateType.Reproducing, new ReproducingState(reproductionStrategy) }
             };
             var fsm = new BugFSM(bug, states);

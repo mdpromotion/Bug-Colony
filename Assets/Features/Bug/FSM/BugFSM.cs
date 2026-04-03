@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Bug.FSM
 {
@@ -11,8 +13,10 @@ namespace Bug.FSM
 
     public class BugFSM
     {
-        private Domain.Bug _bug;
+        private readonly Domain.Bug _bug;
         private IBugState _currentState;
+
+        public event Action<Vector3> TargetPositionChanged;
 
         private readonly Dictionary<BugStateType, IBugState> _states = new();
 
@@ -32,6 +36,19 @@ namespace Bug.FSM
             _currentState = newState;
 
             _currentState.Enter(_bug);
+        }
+
+        public void NotifyTargetPositionChanged(Vector3 newPosition)
+        {
+            if (newPosition == null)
+                return;
+
+            TargetPositionChanged?.Invoke(newPosition);
+        }
+
+        public void Update()
+        {
+            _currentState?.Execute(_bug, this);
         }
     }
 }
