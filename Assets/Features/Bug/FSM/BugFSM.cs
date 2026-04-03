@@ -8,6 +8,7 @@ namespace Bug.FSM
     {
         Idle,
         Moving,
+        Eating,
         Reproducing
     }
 
