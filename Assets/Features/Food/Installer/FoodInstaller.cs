@@ -7,6 +7,7 @@ namespace Food.Installers
     {
         public override void InstallBindings()
         {
+            Container.Bind<IFoodFactory>().To<FoodFactory>().AsSingle();
             Container.Bind<IFoodService>().To<FoodService>().AsSingle();
         }
     }
