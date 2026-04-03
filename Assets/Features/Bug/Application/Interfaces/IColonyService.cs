@@ -1,4 +1,3 @@
-using R3;
 using UnityEngine;
 
 namespace Bug.Infrastructure
@@ -8,6 +7,5 @@ namespace Bug.Infrastructure
         void AddBug(Domain.Bug bug);
         void RemoveBug(Domain.Bug bug);
         Vector3? GetNearestBug(Vector3 position, System.Func<Domain.Bug, bool> filter);
-        Subject<Domain.Bug> OnBugDied { get; }
     }
 }
