@@ -1,12 +1,10 @@
-using UnityEngine;
-
 namespace Bug.Strategies
 {
     public class PredatorReproductionStrategy : IReproductionStrategy
     {
-        public Vector3 GetReproductionPosition(Domain.Bug bug)
+        public bool CanReproduce(Domain.Bug bug)
         {
-            return Vector3.zero;
+            return bug.FoodEaten >= 3;
         }
     }
 }
