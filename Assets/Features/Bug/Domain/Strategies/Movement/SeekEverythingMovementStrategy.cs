@@ -19,7 +19,7 @@ namespace Bug.Strategies
         public MovementStrategyData? GetTargetPosition(Domain.Bug bug)
         {
             var foodPosition = _foodService.GetNearestFood(bug.Position);
-            var bugPosition = _colonyService.GetNearestBug(bug.Position, f => f.Type != bug.Type);
+            var bugPosition = _colonyService.GetNearestBug(bug.Position);
 
             Vector3? target = null;
             float bestDistanceSqr = float.MaxValue;

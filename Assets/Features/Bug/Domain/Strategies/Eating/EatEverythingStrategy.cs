@@ -21,7 +21,7 @@ namespace Bug.Strategies
                 return;
 
 
-            _colonyService.ConsumeNearestBug(bug.Position, f => f.Type != bug.Type);
+            _colonyService.ConsumeNearestBug(bug.Position);
         }
 
     }

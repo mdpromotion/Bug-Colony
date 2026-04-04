@@ -19,9 +19,9 @@ namespace Bug.Infrastructure
 
         public int GetBugCount() => _bugs.Count;
 
-        public bool ConsumeNearestBug(Vector3 position, System.Func<Domain.Bug, bool> filter, float distance = 0.3f)
+        public bool ConsumeNearestBug(Vector3 position, float distance = 0.3f)
         {
-            var bug = GetNearestBugInternal(position, filter, distance);
+            var bug = GetNearestBugInternal(position, distance);
             if (bug == null)
                 return false;
 
@@ -31,21 +31,18 @@ namespace Bug.Infrastructure
             return true;
         }
 
-        public Vector3? GetNearestBug(Vector3 position, System.Func<Domain.Bug, bool> filter)
+        public Vector3? GetNearestBug(Vector3 position)
         {
-            return GetNearestBugInternal(position, filter)?.Position;
+            return GetNearestBugInternal(position)?.Position;
         }
 
-        private Domain.Bug? GetNearestBugInternal(Vector3 position, System.Func<Domain.Bug, bool> filter, float distance = 100f)
+        private Domain.Bug? GetNearestBugInternal(Vector3 position, float distance = 100f)
         {
             Domain.Bug? bestBug = null;
             float bestDistance = float.MaxValue;
 
             foreach (var bug in _bugs)
             {
-                if (!filter(bug))
-                    continue;
-
                 var distanceSqr = (position - bug.Position).sqrMagnitude;
                 if (distanceSqr > distance)
                     continue;
