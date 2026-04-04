@@ -14,7 +14,11 @@ namespace Bug.FSM
         public void Enter(Domain.Bug bug) { }
         public void Execute(Domain.Bug bug, BugFSM fsm)
         {
-            // Reproduction logic here
+            if (_reproductionStrategy.CanReproduce(bug))
+            {
+                _reproductionStrategy.TryReproduce(bug);
+                fsm.ChangeState(BugStateType.Idle);
+            }
         }
 
         public void Exit(Domain.Bug bug) { }

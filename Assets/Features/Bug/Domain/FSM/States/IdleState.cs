@@ -2,30 +2,26 @@ using Bug.Strategies;
 
 namespace Bug.FSM
 {
-    public class MovingState : IBugState
+    public class IdleState : IBugState
     {
         private readonly IMovementStrategy _movementStrategy;
 
-        public MovingState(IMovementStrategy movementStrategy)
+        public IdleState(IMovementStrategy movementStrategy)
         {
             _movementStrategy = movementStrategy;
         }
 
         public void Enter(Domain.Bug bug) { }
-
         public void Execute(Domain.Bug bug, BugFSM fsm)
         {
-            var newPosition = _movementStrategy.GetTargetPosition(bug);
-            if (!newPosition.HasValue)
+            var targetPosition = _movementStrategy.GetTargetPosition(bug);
+            if (targetPosition.HasValue)
             {
-                fsm.ChangeState(BugStateType.Idle);
+                fsm.ChangeState(BugStateType.Moving);
+                fsm.NotifyTargetPositionChanged(targetPosition.Value.TargetPosition);
                 return;
             }
-
-            fsm.NotifyTargetPositionChanged(newPosition.Value);
-
         }
-
         public void Exit(Domain.Bug bug) { }
     }
 }
