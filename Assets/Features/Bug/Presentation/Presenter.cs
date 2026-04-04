@@ -14,6 +14,7 @@ namespace Bug.Presentation
 
         public Presenter(BugsData data, IView view, IBugEventBus eventBus)
         {
+            _data = data;
             _view = view;
             _eventBus = eventBus;
         }
