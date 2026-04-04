@@ -1,11 +1,12 @@
 using Food.Infrastructure;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 namespace Food.Application
 {
     public class SpawnFoodUseCase
     {
-        public static readonly string LogPrefix = nameof(FoodFactory);
+        public static readonly string LogTag = nameof(FoodFactory);
 
         private readonly IFoodFactory _foodFactory;
         private readonly IFoodService _foodService;
@@ -18,15 +19,29 @@ namespace Food.Application
             _logger = logger;
         }
 
-        public void SpawnFood()
+        public void SpawnFood(Vector3 origin)
         {
-            var factoryOutput = _foodFactory.CreateFood(Vector3.zero);
-            if (!factoryOutput.HasValue)
+            var spawnPosition = _foodService.GetFreeFoodPosition(origin);
+            if (spawnPosition == null)
             {
-                _logger.LogWarning(LogPrefix, "Failed to spawn food.");
+                _logger.LogWarning(LogTag, "Failed to find free position to spawn food");
                 return;
             }
+
+            var factoryOutput = _foodFactory.CreateFood(spawnPosition.Value, this);
+            if (!factoryOutput.IsSuccess)
+            {
+                _logger.LogWarning(LogTag, $"Failed to spawn food: {factoryOutput.Error}");
+                return;
+            }
+
             _foodService.AddFood(factoryOutput.Value.Food);
+        }
+
+        public void DespawnFood(Domain.Food food, IFoodView foodView)
+        {
+            _foodFactory.ReturnFood(foodView);
+            _foodService.RemoveFood(food);
         }
     }
 }
