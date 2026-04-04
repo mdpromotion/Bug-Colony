@@ -3,6 +3,7 @@ using Bug.Application.Factories;
 using Bug.Application.UseCases;
 using Bug.Domain;
 using Bug.Infrastructure;
+using Bug.Presentation;
 using Bug.Strategies;
 using System.Collections.Generic;
 using Zenject;
@@ -26,7 +27,17 @@ namespace Bug.Installers
             Container.Bind<BugFSMFactory>().AsSingle();
             Container.Bind<IBugAssembler>().To<BugAssembler>().AsSingle();
             Container.BindInterfacesTo<BugAIController>().AsSingle().NonLazy();
+
+            InstallPresentation();
         }
+
+        private void InstallPresentation()
+        {
+            Container.BindInterfacesTo<Presenter>().AsSingle();
+            Container.Bind<IView>().To<View>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<BugsData>().AsSingle();
+        }
+
         private void BindStrategies()
         {
             Container.Bind<SeekFoodMovementStrategy>().AsTransient();
