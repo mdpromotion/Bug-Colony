@@ -16,35 +16,63 @@ namespace Bug.Installers
             Container.Bind<IColonyService>().To<ColonyService>().AsSingle();
             Container.Bind<SpawnBugUseCase>().AsSingle();
             Container.Bind<BugFactory>().AsSingle();
+            Container.Bind<IBugObjectFactory>().To<BugObjectFactory>().AsSingle();
+            Container.Bind<IBugEventBus>().To<BugEventBus>().AsSingle();
+            Container.BindInterfacesTo<BugEventHandler>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<ColonyController>().AsSingle().NonLazy();
 
             BindStrategies();
 
             Container.Bind<BugFSMFactory>().AsSingle();
             Container.Bind<IBugAssembler>().To<BugAssembler>().AsSingle();
+            Container.BindInterfacesTo<BugAIController>().AsSingle().NonLazy();
         }
         private void BindStrategies()
         {
+            Container.Bind<SeekFoodMovementStrategy>().AsTransient();
+            Container.Bind<SeekEverythingMovementStrategy>().AsTransient();
+
+            Container.Bind<EatOnlyFoodStrategy>().AsTransient();
+            Container.Bind<EatEverythingStrategy>().AsTransient();
+
+            Container.Bind<WorkerReproductionStrategy>().AsTransient();
+            Container.Bind<PredatorReproductionStrategy>().AsTransient();
+
+            BindMovementStrategies();
+            BindEatingStrategies();
+            BindReproductionStrategies();
+        }
+
+
+        private void BindMovementStrategies()
+        {
             Container.Bind<Dictionary<BugType, IMovementStrategy>>()
-                .FromMethod(_ => new Dictionary<BugType, IMovementStrategy>
+                .FromMethod(ctx => new Dictionary<BugType, IMovementStrategy>
                 {
-                    { BugType.Worker, new SeekFoodMovementStrategy() },
-                    { BugType.Predator, new SeekEverythingMovementStrategy() }
+            { BugType.Worker, ctx.Container.Instantiate<SeekFoodMovementStrategy>() },
+            { BugType.Predator, ctx.Container.Instantiate<SeekEverythingMovementStrategy>() }
                 })
                 .AsSingle();
+        }
 
+        private void BindEatingStrategies()
+        {
             Container.Bind<Dictionary<BugType, IEatingStrategy>>()
-                .FromMethod(_ => new Dictionary<BugType, IEatingStrategy>
+                .FromMethod(ctx => new Dictionary<BugType, IEatingStrategy>
                 {
-                    { BugType.Worker, new EatOnlyFoodStrategy() },
-                    { BugType.Predator, new EatOnlyFoodStrategy() }
+            { BugType.Worker, ctx.Container.Instantiate<EatOnlyFoodStrategy>() },
+            { BugType.Predator, ctx.Container.Instantiate<EatEverythingStrategy>() }
                 })
                 .AsSingle();
+        }
 
+        private void BindReproductionStrategies()
+        {
             Container.Bind<Dictionary<BugType, IReproductionStrategy>>()
-                .FromMethod(_ => new Dictionary<BugType, IReproductionStrategy>
+                .FromMethod(ctx => new Dictionary<BugType, IReproductionStrategy>
                 {
-                    { BugType.Worker, new WorkerReproductionStrategy() },
-                    { BugType.Predator, new PredatorReproductionStrategy() }
+            { BugType.Worker, ctx.Container.Instantiate<WorkerReproductionStrategy>() },
+            { BugType.Predator, ctx.Container.Instantiate<PredatorReproductionStrategy>() }
                 })
                 .AsSingle();
         }

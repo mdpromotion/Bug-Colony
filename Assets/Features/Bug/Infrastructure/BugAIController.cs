@@ -1,45 +1,63 @@
 using Bug.Application;
+using Shared.Abstractions;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 namespace Bug.Infrastructure
 {
-    public class BugAIController : ITickable
+    public class BugAIController : IInitializable, IDisposable, IBugAIController
     {
-        private List<IBugController> _controllers = new();
+        private readonly Dictionary<Domain.Bug, IBugController> _controllers = new();
+        private readonly List<IBugController> _controllerCache = new();
 
-        private float _timer;
-        private readonly float _interval;
+        private readonly ITick _tickManager;
 
-        public BugAIController(float aiUpdateInterval = 0.2f)
+        public BugAIController(ITick tickManager)
         {
-            _interval = aiUpdateInterval;
+            _tickManager = tickManager;
         }
 
-        public void RegisterController(IBugController controller)
+        public void Initialize()
         {
-            if (_controllers == null || _controllers.Contains(controller))
+            _tickManager.Tick += Tick;
+        }
+
+        public void Dispose()
+        {
+            _tickManager.Tick -= Tick;
+            foreach (var controller in _controllers.Values)
+            {
+                controller.Dispose();
+            }
+            _controllers.Clear();
+        }
+
+        public void RegisterController(Domain.Bug bug, IBugController controller)
+        {
+            if (_controllers.ContainsKey(bug))
                 return;
 
-            _controllers.Add(controller);
+            _controllers.Add(bug, controller);
         }
 
-        public void UnregisterController(IBugController controller)
+        public void UnregisterController(Domain.Bug bug)
         {
-            _controllers.Remove(controller);
+            var controller = _controllers[bug];
+            if (controller == null)
+                return;
+
+            controller.Dispose();
+            _controllers.Remove(bug);
         }
 
         public void Tick()
         {
-            _timer += Time.deltaTime;
+            _controllerCache.Clear();
+            _controllerCache.AddRange(_controllers.Values);
 
-            if (_timer < _interval)
-                return;
-
-            _timer = 0;
-
-            foreach (var controller in _controllers)
+            foreach (var controller in _controllerCache)
             {
                 controller.Tick();
             }
