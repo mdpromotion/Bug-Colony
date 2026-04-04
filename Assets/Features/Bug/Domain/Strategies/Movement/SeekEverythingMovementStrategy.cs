@@ -1,27 +1,30 @@
+using Bug.Data;
 using Bug.Infrastructure;
+using Food.Infrastructure;
 using UnityEngine;
 
 namespace Bug.Strategies
 {
     public class SeekEverythingMovementStrategy : IMovementStrategy
     {
-        //private readonly IFoodService _foodService;
+        private readonly IFoodService _foodService;
         private readonly IColonyService _colonyService;
 
-        public SeekEverythingMovementStrategy()
+        public SeekEverythingMovementStrategy(IFoodService foodService, IColonyService colonyService)
         {
-            //_foodPerEat = foodPerEat;
+            _foodService = foodService;
+            _colonyService = colonyService;
         }
 
-        public Vector3? GetTargetPosition(Domain.Bug bug)
+        public MovementStrategyData? GetTargetPosition(Domain.Bug bug)
         {
-            //var foodPosition = _foodService.GetNearestFoodPosition(bug.Position);
-            //var bugPosition = _colonyService.GetNearestBugPosition(bug.Position);
+            var foodPosition = _foodService.GetNearestFood(bug.Position);
+            var bugPosition = _colonyService.GetNearestBug(bug.Position, f => f.Type != bug.Type);
 
-            //Vector3 target = null;
-            //float bestDistance = float.MaxValue;
+            Vector3? target = null;
+            float bestDistanceSqr = float.MaxValue;
 
-            /*if (foodPosition.HasValue)
+            if (foodPosition.HasValue)
             {
                 float distSqr = (foodPosition.Value - bug.Position).sqrMagnitude;
                 if (distSqr < bestDistanceSqr)
@@ -36,14 +39,12 @@ namespace Bug.Strategies
                 float distSqr = (bugPosition.Value - bug.Position).sqrMagnitude;
                 if (distSqr < bestDistanceSqr)
                 {
+                    bestDistanceSqr = distSqr;
                     target = bugPosition.Value;
                 }
             }
 
-            return target;
-             */
-
-            return Vector3.zero; // Placeholder
+            return target != null ? new MovementStrategyData(bestDistanceSqr, target.Value) : null;
         }
     }
 }
