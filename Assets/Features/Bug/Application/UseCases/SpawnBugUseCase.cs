@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Bug.Application.UseCases
 {
-    public class SpawnBugUseCase
+    public class SpawnBugUseCase : ISpawnBugUseCase
     {
         public static readonly string LogTag = nameof(SpawnBugUseCase);
 
