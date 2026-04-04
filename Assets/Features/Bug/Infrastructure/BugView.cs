@@ -5,7 +5,7 @@ namespace Bug.Infrastructure
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(Transform))]
-    public class BugMovementService : MonoBehaviour, IBugMovementService
+    public class BugView : MonoBehaviour, IBugView
     {
         private NavMeshAgent _agent;
         private Transform _transform;
@@ -17,10 +17,16 @@ namespace Bug.Infrastructure
         }
 
         public Vector3 GetPosition() => _transform.position;
+        public GameObject GetGameObject() => gameObject;
+
+        public void SetPosition(Vector3 position)
+        {
+            _agent.Warp(position);
+        }
 
         public void ToggleAgent(bool isActive)
         {
-            _agent.isStopped = isActive;
+            _agent.enabled = isActive;
         }
 
         public void SetTarget(Vector3 position)
