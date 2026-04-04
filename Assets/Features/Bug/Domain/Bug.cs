@@ -50,5 +50,9 @@ namespace Bug.Domain
         {
             FoodEaten = food;
         }
+        public void ResetLifeTime()
+        {
+            LifeTime = 0;
+        }
     }
 }
