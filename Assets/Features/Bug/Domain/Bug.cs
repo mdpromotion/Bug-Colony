@@ -9,11 +9,29 @@ namespace Bug.Domain
         public int FoodEaten { get; private set; }
         public BugType Type { get; private set; }
 
+        public float LifeDuration { get; private set; } // in ticks, where 1 tick = 0.1 second.
+        public float LifeTime { get; private set; } // in ticks, where 1 tick = 0.1 second.
+
         public event Action BugDied;
 
-        public Bug(BugType type)
+        public Bug(BugType type, float lifeDuration = float.MaxValue)
         {
             Type = type;
+            LifeDuration = lifeDuration;
+        }
+
+        public void Tick()
+        {
+            LifeTime += 1f; // Simulate time passing by 1 tick (0.1 second)
+            if (LifeTime >= LifeDuration)
+            {
+                Die();
+            }
+        }
+
+        public void Die()
+        {
+            BugDied?.Invoke();
         }
 
         public void SetPosition(Vector3 position)

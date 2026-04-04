@@ -30,6 +30,7 @@ namespace Bug.Application.Factories
             {
                 { BugStateType.Idle, new IdleState(movementStrategy) },
                 { BugStateType.Moving, new MovingState(movementStrategy) },
+                { BugStateType.Eating, new EatingState(eatingStrategy, reproductionStrategy) },
                 { BugStateType.Reproducing, new ReproducingState(reproductionStrategy) }
             };
             var fsm = new BugFSM(bug, states);

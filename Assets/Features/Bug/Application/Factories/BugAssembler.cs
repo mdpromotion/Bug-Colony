@@ -1,5 +1,4 @@
 using Bug.Application.Factories;
-using Bug.Domain;
 
 namespace Bug.Application
 {
@@ -7,18 +6,26 @@ namespace Bug.Application
     {
         private readonly BugFSMFactory _bugFSMFactory;
         private readonly BugFactory _bugFactory;
+        private readonly IBugEventBus _bugEventBus;
 
-        public BugAssembler(BugFSMFactory bugFSMFactory, BugFactory bugFactory)
+        public BugAssembler(BugFSMFactory bugFSMFactory, BugFactory bugFactory, IBugEventBus bugEventBus)
         {
             _bugFSMFactory = bugFSMFactory;
             _bugFactory = bugFactory;
+            _bugEventBus = bugEventBus;
         }
 
-        public AssemblerOutput CreateBug(BugType type)
+        public AssemblerOutput CreateBug(AssemblerContext context)
         {
-            var bug = _bugFactory.CreateBug(type);
-            _bugFSMFactory.CreateBugFSM(bug);
-            return new AssemblerOutput();
+            var bug = _bugFactory.CreateBug(context.Type);
+            var fsm = _bugFSMFactory.CreateBugFSM(bug);
+
+            var controller = new BugController(bug, fsm, context.BugView, _bugEventBus);
+
+            controller.Spawn(context.Position);
+            controller.ToggleAgent(true);
+
+            return new AssemblerOutput(bug, controller);
         }
     }
 }

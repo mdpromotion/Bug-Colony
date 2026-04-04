@@ -10,7 +10,6 @@ namespace Food.Installers
         {
             Container.Bind<IFoodFactory>().To<FoodFactory>().AsSingle();
             Container.Bind<IFoodService>().To<FoodService>().AsSingle();
-            Container.Bind<ISpawnFoodUseCase>().To<SpawnFoodUseCase>().AsSingle();
         }
     }
 }

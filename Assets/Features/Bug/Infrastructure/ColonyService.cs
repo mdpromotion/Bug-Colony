@@ -1,4 +1,4 @@
-using R3;
+#nullable enable
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -17,24 +17,75 @@ namespace Bug.Infrastructure
 
         public void RemoveBug(Domain.Bug bug) => _bugs.Remove(bug);
 
+        public int GetBugCount() => _bugs.Count;
+
+        public bool ConsumeNearestBug(Vector3 position, System.Func<Domain.Bug, bool> filter, float distance = 0.3f)
+        {
+            var bug = GetNearestBugInternal(position, filter, distance);
+            if (bug == null)
+                return false;
+
+            Debug.Log($"Consumed bug at {bug.Position}");
+
+            bug.Die();
+            return true;
+        }
+
         public Vector3? GetNearestBug(Vector3 position, System.Func<Domain.Bug, bool> filter)
         {
+            return GetNearestBugInternal(position, filter)?.Position;
+        }
+
+        private Domain.Bug? GetNearestBugInternal(Vector3 position, System.Func<Domain.Bug, bool> filter, float distance = 100f)
+        {
             Domain.Bug? bestBug = null;
-            float bestDistanceSqr = float.MaxValue;
+            float bestDistance = float.MaxValue;
 
             foreach (var bug in _bugs)
             {
-                if (!filter(bug)) continue;
+                if (!filter(bug))
+                    continue;
 
                 var distanceSqr = (position - bug.Position).sqrMagnitude;
-                if (distanceSqr < bestDistanceSqr)
+                if (distanceSqr > distance)
+                    continue;
+
+                if (distanceSqr < bestDistance)
                 {
                     bestBug = bug;
-                    bestDistanceSqr = distanceSqr;
+                    bestDistance = distanceSqr;
                 }
             }
+            return bestBug;
+        }
 
-            return bestBug?.Position;
+        public Vector3? GetFreePosition(Vector3 origin, float offset = 1f, int maxAttempts = 100)
+        {
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                var randomOffset = new Vector3(
+                    Random.Range(-offset, offset),
+                    0,
+                    Random.Range(-offset, offset)
+                );
+
+                var candidate = origin + randomOffset;
+
+                bool isOccupied = false;
+                foreach (var bug in _bugs)
+                {
+                    if ((bug.Position - candidate).sqrMagnitude < offset * offset)
+                    {
+                        isOccupied = true;
+                        break;
+                    }
+                }
+
+                if (!isOccupied)
+                    return candidate;
+            }
+
+            return null;
         }
     }
 }
