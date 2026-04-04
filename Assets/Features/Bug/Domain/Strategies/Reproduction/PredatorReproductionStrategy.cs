@@ -1,26 +1,20 @@
 using Bug.Application;
 using Bug.Infrastructure;
 using Shared.Provider;
-using UnityEngine;
 
 namespace Bug.Strategies
 {
     public class PredatorReproductionStrategy : IReproductionStrategy
     {
-        private readonly IRandomProvider _randomProvider;
         private readonly IColonyService _colonyService;
         private readonly IBugEventBus _eventBus;
 
-        private const int FoodRequiredToReproduce = 2;
-        private const int BugsToMutate = 10;
-        private const float MutationChance = 0.1f;
+        private const int FoodRequiredToReproduce = 3;
 
         public PredatorReproductionStrategy(
-            IRandomProvider randomProvider,
             IColonyService colonyService,
             IBugEventBus eventBus)
         {
-            _randomProvider = randomProvider;
             _colonyService = colonyService;
             _eventBus = eventBus;
         }
@@ -33,28 +27,11 @@ namespace Bug.Strategies
             if (!spawnPosition.HasValue)
                 return false;
 
-            Debug.LogError(bug.FoodEaten);
-
             bug.SetFood(0);
+            bug.ResetLifeTime();
 
-            Debug.LogWarning($"Found free position for reproduction at {spawnPosition.Value}");
+            _eventBus.RaiseSpawnBugRequested(Domain.BugType.Predator, spawnPosition.Value);
 
-            if (_colonyService.GetBugCount() > BugsToMutate)
-            {
-                var randomValue = _randomProvider.GetRandom();
-
-                if (randomValue < MutationChance)
-                {
-                    _eventBus.RaiseSpawnBugRequested(Domain.BugType.Predator, spawnPosition.Value);
-                    return true;
-                }
-            }
-
-            _eventBus.RaiseSpawnBugRequested(Domain.BugType.Worker, spawnPosition.Value);
-
-            Debug.LogWarning($"Spawned new Worker bug at position {spawnPosition.Value}");
-
-            Debug.LogWarning("Reproduction process finished successfully.");
             return true;
         }
     }
